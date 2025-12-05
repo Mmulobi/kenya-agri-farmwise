@@ -5,6 +5,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Leaf, Mail, Lock, Eye, EyeOff, ArrowLeft, User, Phone, Tractor, ShoppingBag } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { supabase } from '@/integrations/supabase/client';
 
 const Signup = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -25,15 +26,46 @@ const Signup = () => {
     e.preventDefault();
     setIsLoading(true);
 
-    // Mock registration - Replace with Firebase Auth
-    setTimeout(() => {
-      setIsLoading(false);
+    try {
+      const redirectUrl = `${window.location.origin}/`;
+      
+      const { data, error } = await supabase.auth.signUp({
+        email: formData.email,
+        password: formData.password,
+        options: {
+          emailRedirectTo: redirectUrl,
+          data: {
+            full_name: formData.name,
+            phone: formData.phone,
+            role: role,
+          },
+        },
+      });
+
+      if (error) {
+        toast({
+          title: 'Signup Failed',
+          description: error.message,
+          variant: 'destructive',
+        });
+        setIsLoading(false);
+        return;
+      }
+
       toast({
         title: 'Account Created!',
         description: 'Welcome to AgriConnect. Let\'s get started!',
       });
       navigate('/dashboard');
-    }, 1500);
+    } catch (err) {
+      toast({
+        title: 'Error',
+        description: 'An unexpected error occurred. Please try again.',
+        variant: 'destructive',
+      });
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
