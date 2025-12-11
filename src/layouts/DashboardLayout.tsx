@@ -46,13 +46,15 @@ const DashboardLayout = () => {
   }
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background relative selection:bg-primary/10 selection:text-primary overflow-x-hidden">
+      <div className="fixed inset-0 pointer-events-none pattern-grid opacity-[0.4] z-0" />
+
       <DashboardSidebar isOpen={sidebarOpen} setIsOpen={setSidebarOpen} />
 
-      <div className="lg:ml-64">
+      <div className="lg:ml-64 relative z-10 transition-all duration-300 ease-in-out">
         <DashboardHeader onMenuClick={() => setSidebarOpen(true)} />
 
-        <main className="p-4 lg:p-6">
+        <main className="p-4 lg:p-6 max-w-7xl mx-auto animate-fade-in">
           <Outlet />
         </main>
       </div>

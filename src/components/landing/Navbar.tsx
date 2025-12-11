@@ -1,88 +1,95 @@
-import { useState } from 'react';
-import { Link } from 'react-router-dom';
-import { Button } from '@/components/ui/button';
-import { Menu, X, Leaf } from 'lucide-react';
+import { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
+import { Menu, X, Leaf } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setScrolled(window.scrollY > 50);
+    };
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   return (
-    <nav className="fixed top-0 left-0 right-0 z-50 bg-primary/95 backdrop-blur-md border-b border-primary-foreground/10">
-      <div className="container mx-auto px-4">
-        <div className="flex items-center justify-between h-16">
-          {/* Logo */}
-          <Link to="/" className="flex items-center gap-2 text-primary-foreground">
-            <div className="w-10 h-10 rounded-xl accent-gradient flex items-center justify-center shadow-glow">
-              <Leaf className="w-6 h-6 text-accent-foreground" />
-            </div>
-            <span className="text-xl font-bold">AgriConnect</span>
-          </Link>
-
-          {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center gap-8">
-            <a href="#features" className="text-primary-foreground/80 hover:text-primary-foreground transition-colors">
-              Features
-            </a>
-            <a href="#how-it-works" className="text-primary-foreground/80 hover:text-primary-foreground transition-colors">
-              How it Works
-            </a>
-            <a href="#pricing" className="text-primary-foreground/80 hover:text-primary-foreground transition-colors">
-              Pricing
-            </a>
+    <nav
+      className={`fixed w-full z-50 transition-all duration-300 ${scrolled ? "bg-black/80 backdrop-blur-md py-4" : "bg-transparent py-4 md:py-6"
+        }`}
+    >
+      <div className="container mx-auto px-4 flex justify-between items-center">
+        <Link to="/" className="flex items-center space-x-2 group">
+          <div className="bg-primary/90 p-2 rounded-xl group-hover:bg-primary transition-colors">
+            <Leaf className="h-6 w-6 text-white" />
           </div>
+          <span className="text-2xl font-bold text-white tracking-tight">
+            Agri<span className="text-primary">Connect</span>
+          </span>
+        </Link>
 
-          {/* Desktop Actions */}
-          <div className="hidden md:flex items-center gap-3">
+        {/* Desktop Menu */}
+        <div className="hidden md:flex items-center space-x-8">
+          {["Features", "Impact", "Market", "About"].map((item) => (
+            <a
+              key={item}
+              href={`#${item.toLowerCase()}`}
+              className="text-white/90 hover:text-primary transition-colors font-medium text-sm tracking-wide"
+            >
+              {item}
+            </a>
+          ))}
+          <div className="flex items-center space-x-4">
             <Link to="/login">
-              <Button variant="heroOutline" size="sm">
+              <Button variant="ghost" className="text-white hover:text-white hover:bg-white/10">
                 Log In
               </Button>
             </Link>
             <Link to="/signup">
-              <Button variant="hero" size="sm">
+              <Button className="bg-primary hover:bg-primary/90 text-white rounded-full px-6 shadow-glow">
                 Get Started
               </Button>
             </Link>
           </div>
-
-          {/* Mobile Menu Button */}
-          <button
-            onClick={() => setIsOpen(!isOpen)}
-            className="md:hidden p-2 text-primary-foreground"
-          >
-            {isOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
-          </button>
         </div>
 
-        {/* Mobile Menu */}
-        {isOpen && (
-          <div className="md:hidden py-4 border-t border-primary-foreground/10 animate-fade-in">
-            <div className="flex flex-col gap-4">
-              <a href="#features" className="text-primary-foreground/80 hover:text-primary-foreground py-2">
-                Features
-              </a>
-              <a href="#how-it-works" className="text-primary-foreground/80 hover:text-primary-foreground py-2">
-                How it Works
-              </a>
-              <a href="#pricing" className="text-primary-foreground/80 hover:text-primary-foreground py-2">
-                Pricing
-              </a>
-              <div className="flex flex-col gap-2 pt-4 border-t border-primary-foreground/10">
-                <Link to="/login">
-                  <Button variant="heroOutline" className="w-full">
-                    Log In
-                  </Button>
-                </Link>
-                <Link to="/signup">
-                  <Button variant="hero" className="w-full">
-                    Get Started
-                  </Button>
-                </Link>
-              </div>
-            </div>
-          </div>
-        )}
+        {/* Mobile Menu Button */}
+        <button
+          className="md:hidden text-white p-2"
+          onClick={() => setIsOpen(!isOpen)}
+        >
+          {isOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+        </button>
       </div>
+
+      {/* Mobile Menu */}
+      {isOpen && (
+        <div className="md:hidden absolute top-full left-0 w-full bg-black/95 backdrop-blur-xl border-t border-white/10 p-4 flex flex-col space-y-4 animate-in fade-in slide-in-from-top-4">
+          {["Features", "Impact", "Market", "About"].map((item) => (
+            <a
+              key={item}
+              href={`#${item.toLowerCase()}`}
+              className="text-white/80 hover:text-primary py-2 text-lg font-medium"
+              onClick={() => setIsOpen(false)}
+            >
+              {item}
+            </a>
+          ))}
+          <hr className="border-white/10" />
+          <Link to="/login" onClick={() => setIsOpen(false)}>
+            <Button variant="ghost" className="w-full justify-start text-white hover:bg-white/10">
+              Log In
+            </Button>
+          </Link>
+          <Link to="/signup" onClick={() => setIsOpen(false)}>
+            <Button className="w-full bg-primary hover:bg-primary/90 text-white">
+              Get Started
+            </Button>
+          </Link>
+        </div>
+      )}
     </nav>
   );
 };

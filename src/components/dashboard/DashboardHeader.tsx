@@ -20,7 +20,7 @@ const DashboardHeader = ({ onMenuClick }: DashboardHeaderProps) => {
     .toUpperCase();
 
   return (
-    <header className="sticky top-0 z-30 bg-background/95 backdrop-blur-md border-b border-border">
+    <header className="sticky top-0 z-30 glass border-b border-border/40">
       <div className="flex items-center justify-between h-16 px-4 lg:px-6">
         {/* Left Section */}
         <div className="flex items-center gap-4">
